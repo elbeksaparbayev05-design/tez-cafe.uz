@@ -1,0 +1,46 @@
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #FFF8EC;
+  color: #1F1F1F;
+}
+.font-display {
+  font-family: 'Outfit', sans-serif;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(92, 58, 33, 0.05);
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: #D62828;
+  border-radius: 8px;
+}
+
+.fastfood-card {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+}
+.fastfood-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 28px -8px rgba(214, 40, 40, 0.15);
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #printable-receipt, #printable-receipt * {
+    visibility: visible;
+  }
+  #printable-receipt {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+}

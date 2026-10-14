@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-red: #D62828;
+  --color-brand-red-dark: #B81D1D;
+  --color-brand-yellow: #FFC300;
+  --color-brand-cream: #FFF8EC;
+  --color-brand-brown: #5C3A21;
+  --color-brand-green: #3A7D44;
+  --color-brand-charcoal: #1F1F1F;
+
+  --font-family-sans: 'Inter', sans-serif;
+  --font-family-display: 'Outfit', sans-serif;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #FFF8EC;
+  color: #1F1F1F;
+}
+
+.dark body {
+  background-color: #121212;
+  color: #f3f4f6;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(92, 58, 33, 0.05);
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: #D62828;
+  border-radius: 8px;
+}
+
+.font-display {
+  font-family: 'Outfit', sans-serif;
+}
+
+.fastfood-card {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+}
+.fastfood-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 28px -8px rgba(214, 40, 40, 0.15);
+}
+
+@media print {
+  body * { visibility: hidden; }
+  #printable-receipt, #printable-receipt * { visibility: visible; }
+  #printable-receipt {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+}
