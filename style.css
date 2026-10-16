@@ -1,33 +1,114 @@
+/* ============================================================
+   TezQafe — Theme System & Global Styles
+   Light Mode & Dark Mode Architecture
+   ============================================================ */
+
+:root {
+  color-scheme: light;
+
+  /* Semantic Theme Tokens — Light Mode */
+  --bg-page: #FFF8EC;
+  --bg-surface: #FFFFFF;
+  --bg-surface-soft: #F9F4EB;
+  --bg-surface-elevated: #FFFFFF;
+  --bg-input: #FFFFFF;
+  --bg-muted: #F3ECE0;
+
+  --border-color: #E2D8C0;
+  --border-subtle: #ECE4D0;
+
+  --text-main: #1F1F1F;
+  --text-heading: #5C3A21;
+  --text-muted: #6B5E52;
+  --text-faint: #9C8E80;
+
+  --card-shadow: 0 4px 20px -2px rgba(92, 58, 33, 0.08);
+  --card-hover-shadow: 0 14px 28px -8px rgba(214, 40, 40, 0.16);
+  --scrollbar-thumb: #D62828;
+  --scrollbar-track: rgba(92, 58, 33, 0.06);
+}
+
+.dark {
+  color-scheme: dark;
+
+  /* Semantic Theme Tokens — Dark Mode */
+  --bg-page: #121212;
+  --bg-surface: #1E1E1E;
+  --bg-surface-soft: #252525;
+  --bg-surface-elevated: #2A2A2A;
+  --bg-input: #2A2A2A;
+  --bg-muted: #333333;
+
+  --border-color: #2F2F2F;
+  --border-subtle: #242424;
+
+  --text-main: #F3F4F6;
+  --text-heading: #FDE68A; /* amber-200 */
+  --text-muted: #9CA3AF; /* gray-400 */
+  --text-faint: #6B7280; /* gray-500 */
+
+  --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.45);
+  --card-hover-shadow: 0 14px 28px -8px rgba(0, 0, 0, 0.65);
+  --scrollbar-thumb: #D62828;
+  --scrollbar-track: rgba(255, 255, 255, 0.06);
+}
+
+html, body, #root {
+  min-height: 100vh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-page);
+  color: var(--text-main);
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
 body {
   font-family: 'Inter', sans-serif;
-  background-color: #FFF8EC;
-  color: #1F1F1F;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
+
 .font-display {
   font-family: 'Outfit', sans-serif;
 }
 
+/* Scrollbar Customization */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(92, 58, 33, 0.05);
+  background: var(--scrollbar-track);
   border-radius: 8px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #D62828;
+  background: var(--scrollbar-thumb);
   border-radius: 8px;
 }
 
+/* Card Hover Animation */
 .fastfood-card {
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
 }
 .fastfood-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 14px 28px -8px rgba(214, 40, 40, 0.15);
+  box-shadow: var(--card-hover-shadow);
 }
 
+/* Form controls reset for consistent theming */
+input, select, textarea {
+  color-scheme: light dark;
+}
+.dark input, .dark select, .dark textarea {
+  color-scheme: dark;
+}
+
+/* Print Receipt Styles */
 @media print {
   body * {
     visibility: hidden;

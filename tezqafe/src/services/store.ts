@@ -5,13 +5,14 @@
 // a real backend API (REST or GraphQL).
 // ============================================================
 
-import type { Product, Order, User, AppState } from '../types';
+import type { Product, Order, User, AppState, Favorites } from '../types';
 import { SEED_PRODUCTS, SEED_ORDERS, DEMO_USERS } from '../data/seedData';
 
 const STORAGE_KEYS = {
   products: 'tezqafe_products',
   orders: 'tezqafe_orders',
   users: 'tezqafe_users',
+  favorites: 'tezqafe_favorites',
 };
 
 function loadFromStorage<T>(key: string, fallback: T): T {
@@ -41,6 +42,9 @@ function initStorage(): void {
   }
   if (!localStorage.getItem(STORAGE_KEYS.users)) {
     saveToStorage(STORAGE_KEYS.users, DEMO_USERS);
+  }
+  if (!localStorage.getItem(STORAGE_KEYS.favorites)) {
+    saveToStorage(STORAGE_KEYS.favorites, {} as Favorites);
   }
 }
 
@@ -115,6 +119,18 @@ export const orderService = {
 
   create(order: Order): Order {
     const orders = this.getAll();
+    // Add createdAt timestamp if not provided
+    if (!order.createdAt) {
+      const now = new Date();
+      order.createdAt = now.toISOString();
+      // Set date and time from createdAt if not provided
+      if (!order.date) {
+        order.date = now.toISOString().split('T')[0];
+      }
+      if (!order.time) {
+        order.time = now.toLocaleTimeString('uz-UZ', { hour: '2-digit', minute: '2-digit', hour12: false });
+      }
+    }
     saveToStorage(STORAGE_KEYS.orders, [order, ...orders]);
     return order;
   },
@@ -126,6 +142,57 @@ export const orderService = {
     orders[idx] = { ...orders[idx], status };
     saveToStorage(STORAGE_KEYS.orders, orders);
     return orders[idx];
+  },
+};
+
+// ============================================================
+// Favorites Service
+// ============================================================
+export const favoritesService = {
+  getAll(): Favorites {
+    return loadFromStorage<Favorites>(STORAGE_KEYS.favorites, {} as Favorites);
+  },
+
+  getByUserId(userId: string): number[] {
+    const all = this.getAll();
+    return all[userId] || [];
+  },
+
+  toggleFavorite(userId: string, productId: number): boolean {
+    const all = this.getAll();
+    const userFavorites = all[userId] || [];
+    const index = userFavorites.indexOf(productId);
+    
+    if (index > -1) {
+      // Remove from favorites
+      userFavorites.splice(index, 1);
+    } else {
+      // Add to favorites
+      userFavorites.push(productId);
+    }
+    
+    all[userId] = userFavorites;
+    saveToStorage(STORAGE_KEYS.favorites, all);
+    return index === -1; // Returns true if added, false if removed
+  },
+
+  isFavorite(userId: string, productId: number): boolean {
+    const userFavorites = this.getByUserId(userId);
+    return userFavorites.includes(productId);
+  },
+
+  removeFavorite(userId: string, productId: number): boolean {
+    const all = this.getAll();
+    const userFavorites = all[userId] || [];
+    const index = userFavorites.indexOf(productId);
+    
+    if (index > -1) {
+      userFavorites.splice(index, 1);
+      all[userId] = userFavorites;
+      saveToStorage(STORAGE_KEYS.favorites, all);
+      return true;
+    }
+    return false;
   },
 };
 
@@ -256,5 +323,6 @@ export function getFullAppState(): AppState {
     products: productService.getAll(),
     orders: orderService.getAll(),
     currentUser: authService.getCurrentUser(),
+    favorites: favoritesService.getAll(),
   };
 }

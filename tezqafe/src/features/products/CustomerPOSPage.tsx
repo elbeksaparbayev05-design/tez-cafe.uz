@@ -3,15 +3,19 @@
 // ============================================================
 
 import React, { useMemo, useState } from 'react';
-import { Search, ShoppingCart, Plus, Minus, Trash2, X, Flame, Truck, Store, Package, CreditCard, Banknote, Smartphone } from 'lucide-react';
+import { Search, ShoppingCart, Plus, Minus, Trash2, X, Flame, Truck, Store, Package, CreditCard, Banknote, Smartphone, Heart } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { FOOD_CATEGORIES } from '../../data/seedData';
 import { formatMoney } from '../../utils/helpers';
 import type { Product, CartItem, OrderType, PaymentMethod } from '../../types';
 import { Modal, EmptyState } from '../../components/ui/SharedUI';
+import { CategoryNavBar } from '../../components/CategoryNavBar';
 
 // ---- Product Card ----
 function ProductCard({ product, onAddToCart }: { product: Product; onAddToCart: (p: Product) => void }) {
+  const { isFavorite, toggleFavorite } = useApp();
+  const favorited = isFavorite(product.id);
+
   return (
     <div className="fastfood-card bg-white dark:bg-[#1E1E1E] rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden flex flex-col justify-between">
       <div>
@@ -33,6 +37,16 @@ function ProductCard({ product, onAddToCart }: { product: Product; onAddToCart: 
               </span>
             )}
           </div>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleFavorite(product.id);
+            }}
+            className="absolute top-2 right-2 w-8 h-8 bg-white dark:bg-[#1E1E1E] rounded-full flex items-center justify-center shadow-sm hover:scale-110 transition-transform"
+            title={favorited ? 'Sevimlilardan olib tashlash' : 'Sevimlilarga qo\'shish'}
+          >
+            <Heart className={`w-4 h-4 ${favorited ? 'fill-[#D62828] text-[#D62828]' : 'text-gray-400'}`} />
+          </button>
         </div>
         <div className="p-3.5">
           <h3 className="text-xs font-black text-[#5C3A21] dark:text-amber-100 line-clamp-1">{product.name}</h3>
@@ -401,22 +415,11 @@ export function CustomerPOSPage() {
           )}
         </div>
 
-        {/* Category filter */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1">
-          {FOOD_CATEGORIES.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => setSelectedCategory(cat.id)}
-              className={`px-3.5 py-2 rounded-xl text-xs font-black whitespace-nowrap transition-all flex-shrink-0 ${
-                selectedCategory === cat.id
-                  ? 'bg-[#D62828] text-white shadow-md'
-                  : 'bg-white dark:bg-[#1E1E1E] text-[#5C3A21] dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:border-[#D62828]'
-              }`}
-            >
-              {cat.label}
-            </button>
-          ))}
-        </div>
+        <CategoryNavBar
+          categories={FOOD_CATEGORIES}
+          selectedCategory={selectedCategory}
+          onSelectCategory={setSelectedCategory}
+        />
 
         {/* Product grid */}
         {filteredProducts.length === 0 ? (

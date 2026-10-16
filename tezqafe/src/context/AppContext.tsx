@@ -4,7 +4,7 @@
 
 import React, { createContext, useContext, useCallback, useEffect, useState } from 'react';
 import type { User, Product, Order, CartItem, AppTab } from '../types';
-import { authService, productService, orderService, userService } from '../services/store';
+import { authService, productService, orderService, userService, favoritesService } from '../services/store';
 import { generateOrderId, formatTime, formatToday } from '../utils/helpers';
 
 // ---- State & Actions Interface ----
@@ -49,6 +49,12 @@ interface AppContextValue {
   toast: string;
   showToast: (msg: string) => void;
 
+  // Favorites
+  favorites: number[];
+  toggleFavorite: (productId: number) => void;
+  isFavorite: (productId: number) => boolean;
+  removeFavorite: (productId: number) => void;
+
   // Admin helpers
   allUsers: User[];
   refreshUsers: () => void;
@@ -63,17 +69,58 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [products, setProducts] = useState<Product[]>(() => productService.getAll());
   const [orders, setOrders] = useState<Order[]>(() => orderService.getAll());
   const [allUsers, setAllUsers] = useState<User[]>(() => userService.getAll());
-  const [cart, setCart] = useState<CartItem[]>([]);
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [cart, setCart] = useState<CartItem[]>(() => {
+    try {
+      const saved = localStorage.getItem('tezqafe_cart');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [favorites, setFavorites] = useState<number[]>(() => {
+    if (currentUser) {
+      return favoritesService.getByUserId(currentUser.id);
+    }
+    return [];
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('tezqafe_cart', JSON.stringify(cart));
+    } catch {}
+  }, [cart]);
+
+  // Update favorites when user changes
+  useEffect(() => {
+    if (currentUser) {
+      setFavorites(favoritesService.getByUserId(currentUser.id));
+    } else {
+      setFavorites([]);
+    }
+  }, [currentUser]);
+
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem('tezqafe_theme');
+      if (saved !== null) return saved === 'dark';
+      return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    } catch {
+      return true;
+    }
+  });
   const [toast, setToast] = useState('');
 
-  // Apply dark mode
+  // Apply dark mode and persist
   useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    try {
+      if (isDarkMode) {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('tezqafe_theme', 'dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('tezqafe_theme', 'light');
+      }
+    } catch {}
   }, [isDarkMode]);
 
   const toggleDarkMode = useCallback(() => setIsDarkMode((v) => !v), []);
@@ -166,6 +213,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     if (!currentUser) throw new Error('Not logged in');
     const subtotal = cartItems.reduce((s, i) => s + i.price * i.qty, 0);
     const packagingFee = type === 'takeaway' ? 3000 : 0;
+    const now = new Date();
     const order: Order = {
       orderId: generateOrderId(),
       customerId: currentUser.id,
@@ -173,6 +221,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       type,
       time: formatTime(),
       date: formatToday(),
+      createdAt: now.toISOString(), // Add ISO timestamp
       status: 'new',
       items: cartItems.map((i) => ({ name: i.name, qty: i.qty, price: i.price, options: i.selectedOptions })),
       subtotal,
@@ -225,6 +274,25 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const clearCart = useCallback(() => setCart([]), []);
 
+  // ---- Favorites ----
+  const toggleFavorite = useCallback((productId: number) => {
+    if (!currentUser) return;
+    const added = favoritesService.toggleFavorite(currentUser.id, productId);
+    setFavorites(favoritesService.getByUserId(currentUser.id));
+    showToast(added ? 'Sevimlilarga qo\'shildi!' : 'Sevimlilardan olib tashlandi!');
+  }, [currentUser, showToast]);
+
+  const isFavorite = useCallback((productId: number) => {
+    if (!currentUser) return false;
+    return favoritesService.isFavorite(currentUser.id, productId);
+  }, [currentUser]);
+
+  const removeFavorite = useCallback((productId: number) => {
+    if (!currentUser) return;
+    favoritesService.removeFavorite(currentUser.id, productId);
+    setFavorites(favoritesService.getByUserId(currentUser.id));
+  }, [currentUser]);
+
   // ---- Admin ----
   const refreshUsers = useCallback(() => setAllUsers(userService.getAll()), []);
   const deleteUser = useCallback((id: string) => {
@@ -265,6 +333,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         allUsers,
         refreshUsers,
         deleteUser,
+        favorites,
+        toggleFavorite,
+        isFavorite,
+        removeFavorite,
       }}
     >
       {children}

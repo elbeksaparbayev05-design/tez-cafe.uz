@@ -1,16 +1,30 @@
 <!doctype html>
-<html lang="uz" class="h-full">
+<html lang="uz" class="min-h-screen">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TezQafe - Express Fast Food</title>
+    <!-- Prevent Theme Flash -->
+    <script>
+      (function() {
+        try {
+          const saved = localStorage.getItem('tezqafe_theme');
+          if (saved === 'light') {
+            document.documentElement.classList.remove('dark');
+          } else {
+            document.documentElement.classList.add('dark');
+          }
+        } catch (e) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
   </head>
-  <body class="h-full">
-    <div id="root" class="h-full flex flex-col"></div>
+  <body class="min-h-screen w-full m-0 p-0 transition-colors duration-200">
+    <div id="root" class="min-h-screen w-full flex flex-col"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -11,6 +11,8 @@ export interface User {
   phone: string;
   role: UserRole;
   joinedDate?: string;
+  // Profile picture (base64 encoded for demo - in production use server URLs)
+  avatar?: string;
   // Customer-specific
   savedAddress?: string;
   // Seller-specific
@@ -78,6 +80,7 @@ export interface Order {
   type: OrderType;
   time: string;
   date: string;
+  createdAt?: string; // ISO timestamp when order was created
   status: OrderStatus;
   items: OrderItem[];
   subtotal: number;
@@ -94,6 +97,11 @@ export interface AppState {
   products: Product[];
   orders: Order[];
   currentUser: User | null;
+  favorites: Favorites; // Per-user favorites
+}
+
+export interface Favorites {
+  [userId: string]: number[]; // Map of userId to array of product IDs
 }
 
 export type AppTab =
@@ -103,4 +111,5 @@ export type AppTab =
   | 'reports'
   | 'admin'
   | 'profile'
-  | 'my-orders';
+  | 'my-orders'
+  | 'favorites';

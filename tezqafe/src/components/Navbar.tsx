@@ -5,7 +5,7 @@
 import React from 'react';
 import {
   ShoppingBag, Clock, UtensilsCrossed, BarChart2,
-  ShieldCheck, User, Sun, Moon, LogOut, ListOrdered,
+  ShieldCheck, User, Sun, Moon, LogOut, ListOrdered, Heart,
 } from 'lucide-react';
 import { TezQafeLogo } from './ui/SharedUI';
 import { useApp } from '../context/AppContext';
@@ -25,6 +25,7 @@ export function Navbar() {
   const customerNav: NavItem[] = [
     { tab: 'pos', label: 'Menyudan Tanlash', icon: <ShoppingBag className="w-4 h-4" /> },
     { tab: 'my-orders', label: 'Buyurtmalarim', icon: <ListOrdered className="w-4 h-4" /> },
+    { tab: 'favorites', label: 'Sevimlilar', icon: <Heart className="w-4 h-4" /> },
   ];
 
   const sellerNav: NavItem[] = [
@@ -118,10 +119,14 @@ export function Navbar() {
             <div className="flex items-center gap-2 pl-2 border-l border-gray-200 dark:border-gray-700">
               <button
                 onClick={() => setActiveTab('profile')}
-                className="w-8 h-8 rounded-full bg-[#FFC300] text-[#5C3A21] font-black flex items-center justify-center text-xs cursor-pointer hover:scale-105 transition-transform flex-shrink-0"
+                className="w-8 h-8 rounded-full bg-[#FFC300] text-[#5C3A21] font-black flex items-center justify-center text-xs cursor-pointer hover:scale-105 transition-transform flex-shrink-0 overflow-hidden"
                 title="Profilni ochish"
               >
-                {currentUser.name.charAt(0).toUpperCase()}
+                {currentUser.avatar ? (
+                  <img src={currentUser.avatar} alt="Avatar" className="w-full h-full object-cover" />
+                ) : (
+                  currentUser.name.charAt(0).toUpperCase()
+                )}
               </button>
               <div className="hidden xl:block text-left">
                 <p className="text-xs font-black text-[#1F1F1F] dark:text-gray-200 leading-tight truncate max-w-[120px]">

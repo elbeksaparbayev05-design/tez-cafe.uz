@@ -12,11 +12,11 @@ export function TezQafeLogo({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) {
 
   return (
     <div className="flex items-center gap-2.5">
-      <div className={`${iconSize} rounded-xl bg-[#D62828] flex items-center justify-center shadow-md`}>
-        <svg viewBox="0 0 24 24" className="w-5 h-5 fill-[#FFC300]" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 2C8 2 4 6 4 10c0 2.5 1.5 4.5 3 6l1 2h8l1-2c1.5-1.5 3-3.5 3-6 0-4-4-8-8-8zm0 3c1.7 0 3 1.3 3 3s-1.3 3-3 3-3-1.3-3-3 1.3-3 3-3z"/>
-        </svg>
-      </div>
+      <img 
+        src="/logo.jpg" 
+        alt="TezQafe Logo" 
+        className={`${iconSize} rounded-xl object-contain shadow-md`}
+      />
       <div>
         <span className={`${textSize} font-black font-display tracking-tight text-[#5C3A21] dark:text-amber-200`}>
           tez<span className="text-[#D62828]">qafe</span>

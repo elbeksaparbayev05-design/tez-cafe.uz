@@ -120,6 +120,7 @@ export const SEED_ORDERS: Order[] = [
     type: 'takeaway',
     time: '17:10',
     date: '2026-10-14',
+    createdAt: '2026-10-14T17:10:00.000Z',
     status: 'preparing',
     items: [
       { name: 'Double Cheese Beef Burger', qty: 2, price: 42000, options: ['Pishloq (+4000)'] },
@@ -137,6 +138,7 @@ export const SEED_ORDERS: Order[] = [
     type: 'dine-in',
     time: '17:25',
     date: '2026-10-14',
+    createdAt: '2026-10-14T17:25:00.000Z',
     status: 'new',
     items: [
       { name: 'Pepperoni Special Pitsa 32sm', qty: 1, price: 75000, options: [] },

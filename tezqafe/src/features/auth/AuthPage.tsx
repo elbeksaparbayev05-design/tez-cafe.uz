@@ -4,7 +4,7 @@
 
 import React, { useState } from 'react';
 import { Flame, Eye, EyeOff } from 'lucide-react';
-import { useApp } from '../context/AppContext';
+import { useApp } from '../../context/AppContext';
 
 type AuthMode = 'customer-login' | 'customer-register' | 'seller-login' | 'admin-login';
 
